@@ -1,0 +1,5 @@
+MODEL:
+  NAME: EfficientNet-B1
+  PRETRAINED: https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b1-f1951068.pth
+  OPTIMIZER: Adam
+  CRITERION: CrossEntropyLoss

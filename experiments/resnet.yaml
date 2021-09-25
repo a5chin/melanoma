@@ -1,0 +1,5 @@
+MODEL:
+  NAME: ResNet-18
+  PRETRAINED: https://download.pytorch.org/models/resnet18-f37072fd.pth
+  OPTIMIZER: SGD
+  CRITERION: NLLLoss

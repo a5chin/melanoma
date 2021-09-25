@@ -1,0 +1,13 @@
+matplotlib
+numpy
+pandas
+pathlib
+Pillow
+scikit-learn
+scipy
+sklearn
+torch
+torchvision
+tqdm
+yacs
+efficientnet_pytorch
