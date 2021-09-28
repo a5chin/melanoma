@@ -1,3 +1,4 @@
+einops
 matplotlib
 numpy
 pandas
@@ -8,6 +9,7 @@ scipy
 sklearn
 torch
 torchvision
+tensorboard
 tqdm
 yacs
 efficientnet_pytorch
