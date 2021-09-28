@@ -21,7 +21,7 @@ class MelaDataset(Dataset):
             'train': transforms.Compose([
                 transforms.Resize((256, 256)),
                 transforms.RandomCrop(128),
-                transforms.RandomAffine(degrees=(-30, 30), scale=(0.8, 1.2), resample=Image.BICUBIC),
+                transforms.RandomAffine(degrees=(-30, 30), scale=(0.8, 1.2), interpolation=Image.BICUBIC),
                 transforms.Resize((256, 256)),
                 transforms.ToTensor(),
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -33,7 +33,7 @@ class MelaDataset(Dataset):
             ])
         }
 
-        df = pd.read_csv(config.MODEL.IDS_TRAIN).dropna()
+        df = pd.read_csv(config.DATASET.IDS_TRAIN).dropna()
         benign = df[df['target'] == 0]
         malignant = df[df['target'] == 1]
         # malignant_upsampled = resample(

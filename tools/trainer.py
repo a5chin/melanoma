@@ -20,7 +20,7 @@ class Trainer:
         self.best_acc = 0
         self.criterion = nn.NLLLoss()
         self.optimizer = optim.SGD(self.model.parameters(), lr=1e-3)
-        self.writer_train = SummaryWriter(log_dir=self.cfg.MOSWL.LOG_DIR / Path(self.cfg.MODEL.NAME) / Path('train'))
+        self.writer_train = SummaryWriter(log_dir=self.cfg.MODEL.LOG_DIR / Path(self.cfg.MODEL.NAME) / Path('train'))
         self.writer_val = SummaryWriter(log_dir=self.cfg.MODEL.LOG_DIR / Path(self.cfg.MODEL.NAME) / Path('val'))
 
     def train(self):
@@ -70,7 +70,7 @@ class Trainer:
 
             self.evaluate(self.model, epoch)
 
-    def evaluate(self, model, epoch: Optional[int] = None):
+    def evaluate(self, model: Optional[nn.Module], epoch: Optional[int] = None):
         valdataset = MelaDataset(train=False)
         valdataloader = DataLoader(
             dataset=valdataset,
@@ -82,9 +82,13 @@ class Trainer:
         model.eval()
         total, val_loss, val_acc = 0, 0.0, 0.0
         with torch.no_grad():
-            for images, labels in valdataloader:
-                images = images.to(self.device), labels.to(self.device)
-                preds = model(images)
+            for data in valdataloader:
+                images, sexes, ages, sites, labels = data
+                sexes, ages, sites = sexes.view(-1, 1), ages.view(-1, 1), sites
+                images, meta, labels = images.to(self.device), \
+                                       torch.cat([sexes, ages, sites], dim=1).to(self.device), \
+                                       labels.to(self.device)
+                preds = model(images, meta)
                 loss = self.criterion(preds, labels)
                 results = preds.cpu().detach().numpy().argmax(axis=1)
                 val_acc += accuracy_score(labels.cpu().numpy(), results) * len(labels)
@@ -102,4 +106,4 @@ class Trainer:
             self.writer_val.add_scalar('accuracy', val_acc, epoch)
             if self.best_acc < val_acc:
                 self.best_acc = val_acc
-                torch.save(model.state_dict(), self.cfg.MODEL.SAVED_DIR / Path(self.cfg.MODEL.NAME) + '.pth')
+                torch.save(model.state_dict(), self.cfg.MODEL.SAVED_DIR / Path(self.cfg.MODEL.NAME + '.pth'))
